@@ -72,3 +72,13 @@ in animate loop
 
 modified
 
+# problems installing and referencing libraries to draw text
+
+font libraries are not longer bundled in the core library of three.js and have to be imported externally
+the official FontLoader examples have not been updated to reflect this
+so I was trying to use `loader = THREE.FontLoader`, when actually I need a separate import statement at the top and then use `loader = FontLoader`
+
+Good example here:
+https://www.educative.io/answers/how-to-create-text-in-threejs
+
+# 

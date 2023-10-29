@@ -1,10 +1,8 @@
-// TODO
-// scores as 3d text
-// point count when ball goes off table x
-// keypress to toggle three camera viewpoints
+// TODO: keypress to toggle three camera viewpoints
 
 import * as THREE from 'three';
-import { FontLoader } from '/usr/app/node_modules/three/examples/jsm/loaders/FontLoader.js';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -13,8 +11,15 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-const batBallThickness = 1;
 
+let player1Name = "Graham";
+let player2Name = "Yuri";
+let player1Points = 0;
+let player2Points = 0;
+const maxPoints = 1;
+let gameInProgress = true;
+
+const batBallThickness = 1;
 const tableWidth = 10;
 const tableHeight = 6;
 const tableGeometry = new THREE.BoxGeometry(tableWidth, tableHeight, 0.001);
@@ -37,32 +42,40 @@ const ballGeometry = new THREE.BoxGeometry(ballWidth, ballHeight, batBallThickne
 const ballMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 const ball = new THREE.Mesh(ballGeometry, ballMaterial);
 
-// score text
-//const loader = new THREE.FontLoader();
-//loader.load('/usr/app/node_modules/three/examples/fonts/helvetiker_bold.typeface.json', function (font) {
-//  const textGeometry = new THREE.TextGeometry('Hello, Three.js!', {
-//    font: font,
-//    size: 1,  // Text size
-//    height: 0.1,  // Extrusion depth
-//    curveSegments: 12,  // Number of segments
-//  });
+let textMesh;
 
-//  const textMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-//  const text = new THREE.Mesh(textGeometry, textMaterial);
+function placeText(textToDisplay) {
+  const loader = new FontLoader();
+  loader.load('node_modules/three/examples/fonts/droid/droid_serif_regular.typeface.json', function (font) {
+    // Check if there is an existing text mesh, and remove it from the scene if it exists
+    if (textMesh) {
+      scene.remove(textMesh);
+    }
 
-//  // Position the text
-//  text.position.x = -4;  // Adjust the x position
-//  text.position.y = 0;   // Adjust the y position
-//  text.position.z = 0;   // Adjust the z position
+    const textGeometry = new TextGeometry(textToDisplay, {
+      font: font,
+      size: 0.3,
+      height: 0.01,
+      curveSegments: 12,
+    });
 
-  // Add the text to the scene
-//  scene.add(text);
-//});
+    textGeometry.computeBoundingBox();
+    const textWidth = textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x;
+    textGeometry.translate(-textWidth / 2, 0, 0);
+
+    const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+    textMesh.position.y = 3.2;
+    scene.add(textMesh);
+  });
+}
 
 scene.add(table);
 scene.add(bat1);
 scene.add(bat2);
 scene.add(ball);
+placeText(player1Name + " " + player1Points + " - " + player2Points + " " + player2Name);
 
 bat1.position.x -= 4.5;
 bat2.position.x += 4.5;
@@ -78,11 +91,6 @@ camera.position.z = 5;
 //camera.getWorldDirection(direction);
 //const distance = 10;
 //camera.translateZ(distance);
-
-let player1Points = 0;
-let player2Points = 0;
-const maxPoints = 3;
-let gameInProgress = true;
 
 const movement = { W: false, S: false, O: false, L: false };
 
@@ -101,7 +109,7 @@ document.addEventListener("keyup", (event) => {
 });
 
 let ballDir = 1;
-const ballSpeed = 0.1;
+let ballSpeed = 0.1;
 const batSpeed = 0.1;
 
 function resetBall()
@@ -112,11 +120,36 @@ function resetBall()
     ballDir = random < 0.5 ? -1 : 1;
 }
 
+function sendGameData() {
+  const dataToSend = {
+    player1Name: 'Graham',
+    player1Points: 10,
+    player2Points: 8,
+    player2Name: 'Yuri',
+  }; 
+  fetch('/api/your_endpoint', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    // You may include additional headers or authentication tokens here
+  },
+  body: JSON.stringify(dataToSend),
+})
+  .then((response) => {
+    if (response.ok) {
+      console.log("Response OK.");
+    } else {
+      console.log("Response not OK.");
+    }
+  })
+  .catch((error) => {
+    console.log("Error.");
+  });
+}
+
 function animate() {
   requestAnimationFrame(animate);
-  if (gameInProgress == false) {
-	return;
-  }
+
   // bat key movement
   const tableTop = table.position.y + tableHeight / 2;
   const tableBottom = table.position.y - tableHeight / 2;
@@ -136,6 +169,14 @@ function animate() {
   }
   if (movement.L && bat2Bottom > tableBottom) {
     bat2.position.y -= batSpeed;
+  }
+  
+  if (gameInProgress == false)
+  {
+    ballSpeed = 0;
+    scene.remove(ball);
+    renderer.render(scene, camera);
+    return;
   }
 
   // ball bounce off bats
@@ -167,20 +208,31 @@ function animate() {
   if (ballLeft < tableLeft)
   {
     player2Points++;
+    
     if (player2Points > maxPoints)
     {
+      placeText("Game over... " + player2Name + " has won!");
       gameInProgress = false;
+      sendGameData();
     }
-    resetBall();
+    else {
+      placeText(player1Name + " " + player1Points + " - " + player2Points + " " + player2Name);
+      resetBall();
+    }
   }
   if (ballRight > tableRight)
   {
     player1Points++;
     if (player1Points > maxPoints)
     {
+      placeText("Game over... " + player1Name + " has won!");
       gameInProgress = false;
+      sendGameData();
     }
-    resetBall();
+    else {
+      placeText(player1Name + " " + player1Points + " - " + player2Points + " " + player2Name);
+      resetBall();
+    }
   }
   renderer.render(scene, camera);
 }
