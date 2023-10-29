@@ -1,0 +1,10 @@
+#  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+#  password: <%= ENV["APP_DATABASE_PASSWORD"] %>
+development:
+  adapter: postgresql
+  encoding: unicode
+  database: backend_development
+  username: backend
+  password: backend
+  host: backend_db # can omit this line if 'db' is on same local machine as 'app' container
+  port: 5432

@@ -1,0 +1,26 @@
+#TODO: place passwords in .env file
+version: '3'
+services:
+  frontend:
+    container_name: frontend
+    build:
+        context: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+  backend:
+    container_name: backend
+    build: 
+      context: ./backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend_db
+  backend_db:
+    container_name: backend_db
+    image: postgres:14
+    environment:
+      POSTGRES_DB: backend_development
+      POSTGRES_USER: backend
+      POSTGRES_PASSWORD: backend
