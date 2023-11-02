@@ -1,11 +1,10 @@
 Ruby on Rails (often referred to as Rails) follows the Model-View-Controller (MVC) architectural pattern by default. 
 
-keeps the  (models),  (views), and  (controllers) distinct
+Idea is to keep the business logic (models), presentation (views), and request handling (controllers) distinct.
 
-Rails comes with ActiveRecord, an Object-Relational Mapping (ORM) tool.
-It allows developers to interact with the database using Ruby objects, making it easier to manage data.
+Rails comes with ActiveRecord, an Object-Relational Mapping (ORM) tool. It allows developers to interact with the database using Ruby objects, making it easier to manage data.
 
-
+# Our logic
 
 # MVC
 
@@ -30,8 +29,10 @@ presentation
 ## Controller
 request handling
 
-when button is clicked, the controller will receive the request and interact with the model to add a record to the database.
+"create" handler
+"read" hanlder
 
+when button is clicked, the controller will receive the request and interact with the model to add a record to the database.
 
 RESTful Routing: Rails encourages RESTful routing, which is inherently tied to the MVC pattern. RESTful routes map HTTP verbs (GET, POST, PUT, DELETE) to controller actions, promoting a structured and predictable way of handling requests.
 
@@ -40,7 +41,6 @@ POST: Create a new resource on the server.
 # routing
 
 Routing is set up in the Rails application to map the URL of the welcome page to the corresponding controller action. This is where the button click event would be handled
-
 
 # aim: to implement the MVC above...
 
@@ -94,8 +94,6 @@ then check if data got added:
 `Game.all`
 `exit`
 
-
-
 ## read
 
 i.e.
@@ -105,3 +103,16 @@ Player1Score 11
 Player2Name Yuri
 Player2Score 0
 GameWinner Graham
+
+
+# Rails without views (api-only mode)
+
+To create a Rails application without views, use the `--api` option to skip the generation of views and related assets.
+
+```bash
+rails new your_api_name --api
+```
+
+This will generate a Rails application with the necessary configurations for building API endpoints and interacting with data using controllers and models.
+
+You can then create controllers and routes to define your API's behavior, and you won't need views or templates for rendering HTML since it's focused on handling JSON or other data formats for API responses.

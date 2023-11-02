@@ -1,29 +1,28 @@
 # Use an official Ruby runtime as a parent image
 FROM ruby:3.0
 
-# Set the working directory in the container
 WORKDIR /backend
 
-# Install Rails and other dependencies
-RUN apt-get update && apt-get install nano -y
+RUN apt-get update
+RUN apt-get install nano -y
 RUN gem install rails
 
-# Create a new Rails application
-RUN rails new . --database=postgresql
-RUN rails generate controller Welcome index
+# Create a new Rails application (api mode, no views)
+RUN rails new . --api --database=postgresql
+RUN rails generate controller AddGameData addgamedata
+RUN rails generate controller GetGameData getgamedata
+RUN rails generate model GameData player1Name:string player1Points:integer player2Points:integer player2Name:string
 
-COPY database.yml /backend/config/database.yml
-COPY routes.rb /backend/config/routes.rb
-COPY index.html.erb /backend/app/views/welcome/index.html.erb
+COPY Gemfile /backend/Gemfile
+COPY cors.rb /backend/config/initializers/
+COPY database.yml /backend/config/
+COPY routes.rb /backend/config/
+COPY add_game_data_controller.rb /backend/app/controllers/
+COPY get_game_data_controller.rb /backend/app/controllers/
+COPY entrypoint.sh /backend/
 
-# Expose port 3000 (the default Rails server port)
-EXPOSE 3000
-
-# Install project dependencies (gems)
+# Install gems from Gemfile (cors, particularly)
 RUN bundle install
 
 # Expose port 3000 (the default Rails server port)
 EXPOSE 3000
-
-# Start the Rails server
-CMD ["rails", "server", "-b", "0.0.0.0"]

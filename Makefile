@@ -1,10 +1,10 @@
 all: up
 
 up:
-	docker-compose up --build
+	docker compose up --build
 
 down:
-	docker-compose down
+	docker compose down
 
 clean:
 	docker system prune -a
@@ -13,8 +13,14 @@ clean:
 prune:
 	docker system prune -a
 
-exec:
-	docker-compose exec -it backend /bin/bash
+exec_backend:
+	docker compose exec -it backend /bin/bash
+
+exec_backend_db:
+	docker compose exec -it backend_db /bin/bash
+
+exec_frontend:
+	docker compose exec -it frontend /bin/bash
 
 cp:
 	docker cp backend:/backend/config/routes.rb test.rb

@@ -1,26 +1,35 @@
-#TODO: place passwords in .env file
 version: '3'
 services:
   frontend:
-    container_name: frontend
+    container_name: frontend-container
     build:
-        context: ./frontend
+      context: ./frontend
     ports:
       - "5173:5173"
     depends_on:
       - backend
+
   backend:
-    container_name: backend
+    container_name: backend-container
     build: 
       context: ./backend
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     depends_on:
-      - backend_db
+      backend_db:
+        condition: service_healthy
+    command: ["./entrypoint.sh"]
+
   backend_db:
-    container_name: backend_db
+    container_name: backend_db-container
     image: postgres:14
-    environment:
-      POSTGRES_DB: backend_development
-      POSTGRES_USER: backend
-      POSTGRES_PASSWORD: backend
+    restart: always
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $POSTGRES_DB -U $POSTGRES_USER"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
