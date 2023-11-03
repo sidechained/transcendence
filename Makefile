@@ -6,6 +6,8 @@ up:
 down:
 	docker compose down
 
+re: down up
+
 clean:
 	docker system prune -a
 	docker volume rm $(docker volume ls -q)
@@ -22,7 +24,16 @@ exec_backend_db:
 exec_frontend:
 	docker compose exec -it frontend /bin/bash
 
-cp:
+cp_example:
 	docker cp backend:/backend/config/routes.rb test.rb
 
-.PHONY: all up down clean prune exec cp
+test_add_game_data:
+	curl -X POST -d "player1_name=John&player1_points=10&player2_name=Jane&player2_points=8" http://localhost:8000/api/add_game_data/
+
+test_add_game_data_json:
+	curl -X POST -H "Content-Type: application/json" -d '{"player1_name": "John", "player1_points": 10, "player2_name": "Jane", "player2_points": 8}' http://localhost:8000/api/add_game_data/
+
+test_get_game_data:
+	curl -X GET http://localhost:8000/api/get_game_data/1/
+
+.PHONY: all up down re clean prune exec_backend exec_backend_db exec_frontend cp_example test_add_game_data test_add_game_data_json test_get_game_data

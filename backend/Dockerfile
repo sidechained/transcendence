@@ -1,28 +1,21 @@
-# Use an official Ruby runtime as a parent image
-FROM ruby:3.0
-
-WORKDIR /backend
+FROM python:3.12.0-bookworm
 
 RUN apt-get update
-RUN apt-get install nano -y
-RUN gem install rails
+RUN apt-get install -y --no-install-recommends postgresql-client
+RUN rm -rf /var/lib/apt/lists/*
+COPY requirements.txt ./
+RUN pip install django-cors-headers
+RUN pip install -r requirements.txt
+RUN django-admin startproject backend
+WORKDIR /backend
+#RUN python manage.py collectstatic # CORS related - not quite sure why needed
+RUN python manage.py startapp api
+COPY backend/settings.py ./backend
+COPY api/admin.py ./api
+COPY api/models.py ./api
+COPY api/views.py ./api
+COPY api/urls.py ./api
+COPY backend/urls.py ./backend
+COPY entrypoint.sh .
 
-# Create a new Rails application (api mode, no views)
-RUN rails new . --api --database=postgresql
-RUN rails generate controller AddGameData addgamedata
-RUN rails generate controller GetGameData getgamedata
-RUN rails generate model GameData player1Name:string player1Points:integer player2Points:integer player2Name:string
-
-COPY Gemfile /backend/Gemfile
-COPY cors.rb /backend/config/initializers/
-COPY database.yml /backend/config/
-COPY routes.rb /backend/config/
-COPY add_game_data_controller.rb /backend/app/controllers/
-COPY get_game_data_controller.rb /backend/app/controllers/
-COPY entrypoint.sh /backend/
-
-# Install gems from Gemfile (cors, particularly)
-RUN bundle install
-
-# Expose port 3000 (the default Rails server port)
-EXPOSE 3000
+EXPOSE 8000

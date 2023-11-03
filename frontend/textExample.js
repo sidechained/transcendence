@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 
+import { sendGameData } from './gameData.js'
+
 THREE.Cache.enabled = true;
 
 let container;
@@ -178,7 +180,7 @@ function enterPlayerTwoNameScene(keyCode)
 function sendResult(keyCode)
 {
 	if (keyCode === 13) { // Enter key is pressed.
-		sendGameData();
+		sendGameData(player1Name, player1Points, player2Name, player2Points);
 		sceneNum = 4;
 		text = 'Press enter to display game data from server...';
 		refreshText();		
@@ -277,81 +279,6 @@ function onPointerUp() {
 	document.removeEventListener( 'pointermove', onPointerMove );
 	document.removeEventListener( 'pointerup', onPointerUp );
 }
-
-// API
-
-export function sendGameData() {
-  const dataToSend = {
-    player1Name: player1Name,
-    player1Points: player1Points,
-    player2Name: player2Name,
-    player2Points: player2Points,
-  };
-
-  fetch('http://localhost:3000/addgamedata', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      // You may include additional headers or authentication tokens here
-    },
-    body: JSON.stringify(dataToSend),
-  })
-    .then((response) => {
-      if (response.ok) {
-        console.log("Response OK.");
-        return 1;
-      } else {
-        console.log("Response not OK.");
-        return 0;
-      }
-    })
-    .catch((error) => {
-      console.log("Error.");
-      return -1;
-    });
-}
-
-export function getGameData(id) {
-  const dataToSend = {
-    id: id,
-  };
-
-  fetch('http://localhost:3000/getgamedata', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(dataToSend),
-  })
-    .then((response) => {
-      if (response.ok) {
-        console.log("Response OK.");
-        const responseData = response.json();
-        responseData.then(data => {
-          text = "[Game " + data.id + "] " + data.player1Name + " " + data.player1Points + " - " + data.player2Name + " " + data.player2Points;
-          refreshText();
-          return 1;
-        });
-      } else {
-        console.log("Response not OK.");
-        // Check if the response contains an error message
-        return response.json().then(errorData => {
-          if (errorData.error) {
-            // Handle the error message
-            console.log("Error: " + errorData.error);
-          }
-          return 0;
-        });
-      }
-    })
-    .catch((error) => {
-      console.log("Error.");
-      return -1;
-    });
-}
-
-
-//
 
 function animate() {
 	requestAnimationFrame( animate );
