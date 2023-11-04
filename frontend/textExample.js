@@ -4,6 +4,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 
 import { sendGameData } from './gameData.js'
+import { getGameData } from './gameData.js'
 
 THREE.Cache.enabled = true;
 
@@ -180,18 +181,35 @@ function enterPlayerTwoNameScene(keyCode)
 function sendResult(keyCode)
 {
 	if (keyCode === 13) { // Enter key is pressed.
-		sendGameData(player1Name, player1Points, player2Name, player2Points);
-		sceneNum = 4;
-		text = 'Press enter to display game data from server...';
-		refreshText();		
+		sendGameData(player1Name, player1Points, player2Name, player2Points)
+			.then(({ success, msg }) => {
+			text = msg;
+			refreshText();
+			if (success) {
+				sceneNum = 4;
+				setTimeout(() => {
+				text = "Press enter to retrieve game data from server...";
+				refreshText();
+				}, 1500);
+			}
+		});
 	}
 }
 
 function getResult(keyCode)
 {
 	if (keyCode === 13) { // Enter key is pressed.
-		getGameData(1);
-		sceneNum = 4;
+		getGameData(1)
+			.then(({ success, msg }) => {
+	        text = msg;
+	        refreshText();
+	        if (success) {
+	          setTimeout(() => {
+	            text = "So long and thanks for all the fish...";
+	            refreshText();
+	          }, 4000);
+	        }
+		});
 	}
 }
 

@@ -6,66 +6,64 @@ export async function sendGameData(player1Name, player1Points, player2Name, play
     player2_points: player2Points,
   };
 
+  let success = false;
+  let msg = undefined;
+
   try {
     const response = await fetch('http://localhost:8000/api/add_game_data/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // You may include additional headers or authentication tokens here
       },
       body: JSON.stringify(dataToSend),
     });
 
+    const responseData = await response.json();
+    msg = responseData.message;
+
     if (response.ok) {
       console.log("Response OK.");
-      const responseData = await response.json();
-      console.log("Received response data:", responseData);
-      // Handle the response data as needed
+      console.log("Message:", msg);
+      success = true;
     } else {
       console.log("Response not OK.");
-      // Handle error response
+    }
+  } catch (error) {
+    msg = "Error: network error";
+    console.log(msg);
+  }
+
+  return { success, msg };
+}
+
+export async function getGameData(id) {
+  let success = false;
+  let msg = undefined;
+
+  try {
+    const response = await fetch(`http://localhost:8000/api/get_game_data/${id}/`, {
+      method: 'GET',
+      headers: {
+        // nothing needed here so far
+      },
+    });
+
+    if (response.ok) {
+      console.log("Response OK.");
+      const responseData = await response.json(); // Wait for response data
+      success = true;
+      console.log(responseData);
+      msg = `[Game ${responseData.id}] ${responseData.player1_name} ${responseData.player1_points} - ${responseData.player2_name} ${responseData.player2_points}`;
+    } else {
+      console.log("Response not OK.");
+      msg = responseData.message;
     }
   } catch (error) {
     console.log("Error:", error);
-    // Handle network or other errors
+    msg = "Error: network error";
   }
+
+  return { success, msg };
 }
 
-export function getGameData(id) {
-  const dataToSend = {
-    id: id,
-  };
 
-  fetch('http://localhost:8000/api/get_game_data', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(dataToSend),
-  })
-    .then((response) => {
-      if (response.ok) {
-        console.log("Response OK.");
-        const responseData = response.json();
-        responseData.then(data => {
-          text = "[Game " + data.id + "] " + data.player1Name + " " + data.player1Points + " - " + data.player2Name + " " + data.player2Points;
-          refreshText();
-          return 1;
-        });
-      } else {
-        console.log("Response not OK.");
-        // Check if the response contains an error message
-        return response.json().then(errorData => {
-          if (errorData.error) {
-            // Handle the error message
-            console.log("Error: " + errorData.error);
-          }
-          return 0;
-        });
-      }
-    })
-    .catch((error) => {
-      console.log("Error.");
-      return -1;
-    });
-}
