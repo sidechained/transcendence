@@ -1,17 +1,19 @@
 version: '3'
 services:
-  frontend:
-    container_name: frontend-container
-    build:
-      context: ./frontend
-    ports:
-      - "5173:5173"
-    depends_on:
-      - backend
-    command: npx vite --host 0.0.0.0
+  # frontend:
+  #   container_name: frontend-container
+  #   image: frontend:latest
+  #   build:
+  #     context: ./frontend
+  #   ports:
+  #     - "5173:5173"
+  #   depends_on:
+  #     - backend
+  #   command: npx vite --host 0.0.0.0
 
   backend:
     container_name: backend-container
+    image: backend:latest
     build: 
       context: ./backend
     ports:
@@ -20,8 +22,7 @@ services:
       - .env
     depends_on:
       backend_db:
-        condition: service_healthy    
-    command: ./entrypoint.sh
+        condition: service_healthy
 
   backend_db:
     container_name: backend_db-container
