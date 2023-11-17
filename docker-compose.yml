@@ -2,8 +2,7 @@ version: '3'
 services:
   frontend:
     container_name: frontend-container
-    build:
-      context: ./frontend
+    build: ./frontend
     ports:
       - "5173:5173"
     depends_on:
@@ -12,22 +11,20 @@ services:
 
   backend:
     container_name: backend-container
-    build: 
-      context: ./backend
+    build: ./backend
     ports:
       - "8000:8000"
     env_file:
       - .env
     depends_on:
       backend_db:
-        condition: service_healthy    
-    command: ./entrypoint.sh
+        condition: service_healthy
 
   backend_db:
     container_name: backend_db-container
     image: postgres:14
-    ports:
-      - "5432:5432"
+    expose:
+      - 5432
     restart: always
     env_file:
       - .env

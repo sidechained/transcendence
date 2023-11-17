@@ -16,7 +16,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -26,8 +25,11 @@ SECRET_KEY = 'django-insecure-65c+6#&aq50o3ff04ik!%d^314+fh6r+$sv&%z5de_05o7+^-!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*'] # '*' for now 
 
+# HTTPS/SSL for the API
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
@@ -38,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
+    'corsheaders', # required for SSL self-signed cert
     'api',
 ]
 
@@ -50,7 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # required for SSL self-signed cert
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -139,20 +141,4 @@ CORS_ALLOW_ALL_ORIGINS = True  # Allow requests from all origins (for developmen
 #CORS_ALLOWED_ORIGINS = [
 #    "http://your-frontend-domain.com",
 #]
-
-# logs
-
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console': {
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'root': {
-#         'handlers': ['console'],
-#         'level': 'DEBUG',  # Adjust the log level as needed
-#     },
-# }
 
