@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>User Game Stats Dashboard</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h1>User Game Stats Dashboard</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Games Won vs Games Played</h5>
+                        <canvas id="gamesChart" style="height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Longest Unbeaten Streak</h5>
+                        <p>Streak: 10 games</p>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Shortest vs Longest Match</h5>
+                        <p>Shortest Match: 5 mins</p>
+                        <p>Longest Match: 30 mins</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Time Spent Playing</h5>
+                        <p id="digitalClock">2h 03m</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart.js - Games Won vs Games Played
+        var ctx = document.getElementById('gamesChart').getContext('2d');
+        var gamesChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Games Won', 'Games Played'],
+                datasets: [{
+                    data: [8, 20], // Replace with actual data for the user
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 99, 132, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        // Digital Clock - Total Time Spent Playing
+        function updateClock() {
+            // Calculate total time spent playing, replace with actual calculated time
+            var totalTimeHours = 2;
+            var totalTimeMinutes = 3;
+
+            document.getElementById('digitalClock').innerText = totalTimeHours + 'h ' + totalTimeMinutes + 'm';
+        }
+
+        updateClock(); // Initial update
+    </script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

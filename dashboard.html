@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Game Stats Dashboard</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h1>Game Stats Dashboard</h1>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Your Game Stats</h5>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Game ID</th>
+                                    <th>Player 1</th>
+                                    <th>Player 2</th>
+                                    <th>Player 1 Score</th>
+                                    <th>Player 2 Score</th>
+                                    <th>Game Length</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Here, you'd dynamically generate rows based on retrieved data -->
+                                <tr>
+                                    <td>1</td>
+                                    <td>John</td>
+                                    <td>Jane</td>
+                                    <td>120</td>
+                                    <td>105</td>
+                                    <td>20 mins</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>David</td>
+                                    <td>Sara</td>
+                                    <td>150</td>
+                                    <td>90</td>
+                                    <td>25 mins</td>
+                                </tr>
+                                <!-- You'd iterate through retrieved data to create more rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
