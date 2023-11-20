@@ -44,6 +44,9 @@ test_http_get_unavailable_game_data:
 test_https_add_game_data:
 	curl --cert ./backend/cert/localhost.crt --key ./backend/cert/localhost.key --insecure -X POST -H "Content-Type: application/json" -d '{"player1_name": "John", "player1_points": 10, "player2_name": "Jane", "player2_points": 8}' https://localhost:8000/api/add_game_data/
 
+mkcert_https_add_game_data:
+	curl --cert ./mkcert/localhost+1.pem --key ./mkcert/localhost+1-key.pem --cacert ./mkcert/rootCA.pem -X POST -H "Content-Type: application/json" -d '{"player1_name": "John", "player1_points": 10, "player2_name": "Jane", "player2_points": 8}' https://localhost:8000/api/add_game_data/
+
 test_https_get_game_data:
 	curl --cert ./backend/cert/localhost.crt --key ./backend/cert/localhost.key --insecure -X GET https://localhost:8000/api/get_game_data/1/
 
@@ -52,6 +55,5 @@ test_https_selfsigned_add_game_data:
 
 test_https_selfsigned_get_game_data:
 	curl -k -X GET https://localhost:8000/api/get_game_data/1/
-
 
 .PHONY: TODO
