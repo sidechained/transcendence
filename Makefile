@@ -22,15 +22,12 @@ exec_backend_db:
 exec_frontend:
 	docker compose exec -it frontend /bin/bash
 
-cp_example:
-	docker cp backend:/backend/config/routes.rb test.rb
-
-generate_self_signed_cert:
-	mkdir ./backend/cert
-	openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-	-keyout ./backend/cert/localhost.key \
-	-out ./backend/cert/localhost.crt \
-	-subj "/C=DE/ST=Berlin/L=Berlin/O=42 School/OU=gbooth/CN=gbooth/"
+cp_cert:
+	rm -rf ./cert
+	mkdir cert
+	docker cp backend-container:./root/.local/share/mkcert/rootCA.pem ./cert/
+	docker cp backend-container:/localhost.pem ./cert/
+	docker cp backend-container:/localhost-key.pem ./cert/
 
 test_http_add_game_data:
 	curl -X POST -H "Content-Type: application/json" -d '{"player1_name": "John", "player1_points": 10, "player2_name": "Jane", "player2_points": 8}' http://localhost:8000/api/add_game_data/
@@ -44,8 +41,8 @@ test_http_get_unavailable_game_data:
 test_https_add_game_data:
 	curl --cert ./backend/cert/localhost.crt --key ./backend/cert/localhost.key --insecure -X POST -H "Content-Type: application/json" -d '{"player1_name": "John", "player1_points": 10, "player2_name": "Jane", "player2_points": 8}' https://localhost:8000/api/add_game_data/
 
-mkcert_https_add_game_data:
-	curl --cert ./mkcert/localhost+1.pem --key ./mkcert/localhost+1-key.pem --cacert ./mkcert/rootCA.pem -X POST -H "Content-Type: application/json" -d '{"player1_name": "John", "player1_points": 10, "player2_name": "Jane", "player2_points": 8}' https://localhost:8000/api/add_game_data/
+mkcert_https_add_game_data: cp_cert
+	curl --cert ./cert/localhost.pem --key ./cert/localhost-key.pem --cacert ./cert/rootCA.pem -X POST -H "Content-Type: application/json" -d '{"player1_name": "John", "player1_points": 10, "player2_name": "Jane", "player2_points": 8}' https://localhost:8000/api/add_game_data/
 
 test_https_get_game_data:
 	curl --cert ./backend/cert/localhost.crt --key ./backend/cert/localhost.key --insecure -X GET https://localhost:8000/api/get_game_data/1/
