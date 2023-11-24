@@ -5,8 +5,8 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     https: {
-      key: '/localhost-key.pem',
-      cert: '/localhost.pem',
+      key: '/ssl-keys-shared/localhost-key.pem',
+      cert: '/ssl-keys-shared/localhost.pem',
     },
   },
 });

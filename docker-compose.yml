@@ -5,6 +5,8 @@ services:
     build: ./frontend
     ports:
       - "5173:5173"
+    volumes:
+      - ./ssl-keys:/ssl-keys-shared
     depends_on:
       - backend
 
@@ -15,6 +17,8 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    volumes:
+      - ./ssl-keys:/ssl-keys-shared
     depends_on:
       backend_db:
         condition: service_healthy
@@ -32,3 +36,6 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
+
+volumes:
+  ssl-keys:

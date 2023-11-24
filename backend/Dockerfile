@@ -2,8 +2,10 @@ FROM python:3.12.0-bookworm
 RUN apt update &&\
     apt install -y --no-install-recommends postgresql-client &&\
     apt install mkcert &&\
+    mkdir ./ssl-keys-local &&\
+    export CAROOT=/ssl-keys-local &&\
 	mkcert -install &&\
-	mkcert localhost &&\
+    mkcert -cert-file /ssl-keys-local/localhost.pem -key-file /ssl-keys-local/localhost-key.pem localhost &&\
     pip install gunicorn &&\
     rm -rf /var/lib/apt/lists/*
 COPY requirements.txt ./
