@@ -23,11 +23,11 @@ exec_frontend:
 	docker compose exec -it frontend /bin/bash
 
 cp_cert:
-	rm -rf ./cert
-	mkdir cert
-	docker cp backend-container:./root/.local/share/mkcert/rootCA.pem ./cert/
-	docker cp backend-container:/localhost.pem ./cert/
-	docker cp backend-container:/localhost-key.pem ./cert/
+	rm -rf ./frontend/cert
+	mkdir ./frontend/cert
+	docker cp backend-container:./root/.local/share/mkcert/rootCA.pem ./frontend/cert
+	docker cp backend-container:/localhost.pem ./frontend/cert
+	docker cp backend-container:/localhost-key.pem ./frontend/cert
 
 test_http_add_game_data:
 	curl -X POST -H "Content-Type: application/json" -d '{"player1_name": "John", "player1_points": 10, "player2_name": "Jane", "player2_points": 8}' http://localhost:8000/api/add_game_data/
@@ -41,8 +41,8 @@ test_http_get_unavailable_game_data:
 test_https_add_game_data:
 	curl --cert ./backend/cert/localhost.crt --key ./backend/cert/localhost.key --insecure -X POST -H "Content-Type: application/json" -d '{"player1_name": "John", "player1_points": 10, "player2_name": "Jane", "player2_points": 8}' https://localhost:8000/api/add_game_data/
 
-mkcert_https_add_game_data: cp_cert
-	curl --cert ./cert/localhost.pem --key ./cert/localhost-key.pem --cacert ./cert/rootCA.pem -X POST -H "Content-Type: application/json" -d '{"player1_name": "John", "player1_points": 10, "player2_name": "Jane", "player2_points": 8}' https://localhost:8000/api/add_game_data/
+mkcert_https_add_game_data:
+	curl --cert ./frontend/cert/localhost.pem --key ./frontend/cert/localhost-key.pem --cacert ./frontend/cert/rootCA.pem -X POST -H "Content-Type: application/json" -d '{"player1_name": "John", "player1_points": 10, "player2_name": "Jane", "player2_points": 8}' https://localhost:8000/api/add_game_data/
 
 test_https_get_game_data:
 	curl --cert ./backend/cert/localhost.crt --key ./backend/cert/localhost.key --insecure -X GET https://localhost:8000/api/get_game_data/1/
