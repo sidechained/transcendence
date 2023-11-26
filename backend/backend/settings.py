@@ -140,3 +140,19 @@ CORS_ALLOW_ALL_ORIGINS = True  # Allow requests from all origins (for developmen
 #    "http://your-frontend-domain.com",
 #]
 
+# logs
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'root': {
+#         'handlers': ['console'],
+#         'level': 'DEBUG',  # Adjust the log level as needed
+#     },
+# }
+
