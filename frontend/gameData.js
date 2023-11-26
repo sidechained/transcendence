@@ -14,7 +14,7 @@ export async function sendGameData(player1Name, player1Points, player2Name, play
         // You may include additional headers or authentication tokens here
       },
       body: JSON.stringify(dataToSend),
-      mode: 'cors',
+      mode: 'no-cors',
     });
 
     if (response.ok) {
