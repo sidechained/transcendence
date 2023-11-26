@@ -6,33 +6,33 @@ services:
       context: ./frontend
     ports:
       - "5173:5173"
-    # depends_on:
-    #   - backend
+    depends_on:
+      - backend
     command: npx vite --host 0.0.0.0
 
-  # backend:
-  #   container_name: backend-container
-  #   build: 
-  #     context: ./backend
-  #   ports:
-  #     - "8000:8000"
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     backend_db:
-  #       condition: service_healthy    
-  #   command: ./entrypoint.sh
+  backend:
+    container_name: backend-container
+    build: 
+      context: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      backend_db:
+        condition: service_healthy    
+    command: ./entrypoint.sh
 
-  # backend_db:
-  #   container_name: backend_db-container
-  #   image: postgres:14
-  #   ports:
-  #     - "5432:5432"
-  #   restart: always
-  #   env_file:
-  #     - .env
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -d $POSTGRES_DB -U $POSTGRES_USER"]
-  #     interval: 1s
-  #     timeout: 5s
-  #     retries: 10
+  backend_db:
+    container_name: backend_db-container
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    restart: always
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $POSTGRES_DB -U $POSTGRES_USER"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
